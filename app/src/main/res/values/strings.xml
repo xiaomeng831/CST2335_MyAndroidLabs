@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Xiaomeng\'s Android Labs</string>
-    <string name="email_address" translatable="false">Enter your email address</string>
+    <string name="email_address" translatable="false">Enter your email address:</string>
+    <string name="hintText" translatable="false">Type email here</string>
+    <string name="email_password" translatable="false">Type your password:</string>
     <string name="button_message">LOGIN</string>
 </resources>
