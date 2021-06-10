@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -34,20 +35,27 @@ public class SecondActivity extends AppCompatActivity {
         textView.setText("Welcome back " + emailAddress);
 
         Button button2 = findViewById(R.id.button2);
+
+        EditText emailTextPhone = findViewById(R.id.editTextPhone);
+        SharedPreferences prefs = getSharedPreferences("MyData", Context.MODE_PRIVATE);
+        String tel = prefs.getString("tel","");
+        emailTextPhone.setText(tel);
+
         button2.setOnClickListener(  clk -> {
             Intent call = new Intent(Intent.ACTION_DIAL);
             EditText phoneNumber = findViewById(R.id.editTextPhone);
-            call.setData(Uri.parse("tel:" + phoneNumber));
-            startActivityForResult(call, 5432);} );
+            call.setData(Uri.parse("tel:" + phoneNumber.getText().toString()));
+            startActivityForResult(call, 5432); } );
+
 
         Button button3 = findViewById(R.id.button3);
         button3.setOnClickListener(  clk -> {
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, 3456);} );
 
-        File file = new File("Picture.png");
+        File file = new File(getFilesDir().getAbsolutePath() + "/Picture.png");
         if(file.exists()){
-            Bitmap theImage = BitmapFactory.decodeFile("Picture.png");
+            Bitmap theImage = BitmapFactory.decodeFile(getFilesDir().getAbsolutePath() + "/Picture.png");
             ImageView profileImage = findViewById(R.id.imageView);
             profileImage.setImageBitmap(theImage);
         }
@@ -70,8 +78,20 @@ public class SecondActivity extends AppCompatActivity {
             thumbnail.compress(Bitmap.CompressFormat.PNG, 100, fOut);
             fOut.flush();
             fOut.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EditText phoneNumber = findViewById(R.id.editTextPhone);
+        SharedPreferences prefs = getSharedPreferences("MyData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("tel",phoneNumber.getText().toString());
+        editor.apply();
+
+
     }
 }
