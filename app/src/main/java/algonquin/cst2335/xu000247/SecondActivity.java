@@ -22,6 +22,8 @@ import java.io.IOException;
 
 public class SecondActivity extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +48,8 @@ public class SecondActivity extends AppCompatActivity {
         File file = new File("Picture.png");
         if(file.exists()){
             Bitmap theImage = BitmapFactory.decodeFile("Picture.png");
+            ImageView profileImage = findViewById(R.id.imageView);
+            profileImage.setImageBitmap(theImage);
         }
     }
 
@@ -59,6 +63,7 @@ public class SecondActivity extends AppCompatActivity {
                 profileImage.setImageBitmap(thumbnail);
             }
         }
+
         FileOutputStream fOut = null;
         try {
             fOut = openFileOutput( "Picture.png", Context.MODE_PRIVATE);
