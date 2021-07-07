@@ -36,21 +36,19 @@ public class ChatRoom extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.chatlayout);
         RecyclerView chatList;
         chatList = findViewById(R.id.myrecycler);
         //chatList.setAdapter(new MyChatAdapter());
-
-
         chatList.setAdapter(adt);
         chatList.setLayoutManager(new LinearLayoutManager(this));
-
 
         Button sendButton = findViewById(R.id.sendbutton);
         Button receiveButton = findViewById(R.id.receivebutton);
         EditText input = findViewById(R.id.inputmessage);
+
+        MyOpenHelper opener = new MyOpenHelper(this);
+
 
         sendButton.setOnClickListener(  clk -> {
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd-MMM-yyy hh-mm-ss a", Locale.getDefault());
