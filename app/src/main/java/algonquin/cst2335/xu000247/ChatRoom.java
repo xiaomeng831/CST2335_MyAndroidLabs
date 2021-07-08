@@ -138,15 +138,23 @@ public class ChatRoom extends AppCompatActivity{
                 .setTitle("Question:")
                 .setNegativeButton("No", (dialog, cl) -> {})
                 .setPositiveButton("Yes", (dialog, cl) -> {
-                    position = getAbsoluteAdapterPosition();
+                    //position = getAbsoluteAdapterPosition();
                     ChatMessage removedMessage = messages.get(position);
                     messages.remove(position);
                     adt.notifyItemRemoved(position);
 
+                    //week7 code
+                    db.delete(MyOpenHelper.TABLE_NAME, "_id=?", new String[]{Long.toString(removedMessage.getId())});
 
 
                     Snackbar.make(messageText, "You deleted message #" + position, Snackbar.LENGTH_LONG)
                             .setAction("Undo", click -> {
+                                //week7 code
+                                db.execSQL("Insert into " + MyOpenHelper.TABLE_NAME + " values('" + removedMessage.getId() +
+                                        "','" + removedMessage.getMessage() +
+                                        "','" + removedMessage.getSendOrReceive() +
+                                        "','" + removedMessage.getTimeSent() + "');");
+
                                 messages.add(position, removedMessage);
                                 adt.notifyItemInserted(position);
                             })
