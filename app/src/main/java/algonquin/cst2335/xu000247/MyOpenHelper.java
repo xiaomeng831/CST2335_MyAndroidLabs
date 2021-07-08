@@ -16,16 +16,16 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     public static final String col_time_sent = "TimeSent";
 
 
-    public MyOpenHelper(Context context) {
-        super(context, name, null, version);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("Create table " + TABLE_NAME + "(_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + col_message + " TEXT,"
                 + col_send_receive + " INTEGER,"
                 + col_time_sent + " TEXT);");
+    }
+
+    public MyOpenHelper(Context context) {
+        super(context, name, null, version);
     }
 
     @Override
