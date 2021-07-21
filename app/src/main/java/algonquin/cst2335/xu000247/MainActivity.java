@@ -42,14 +42,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-/** This program is used to let user input password in the app and check the validation of the password.
- * @author Xiaomeng Xu
- * @version 1.0
- */
+
+
 public class MainActivity extends AppCompatActivity {
 
 
-    Bitmap image;
+
     /** This string represents the address of the server we will connect to */
     private String stringURL;
     /** This holds the text at the centre of the screen*/
@@ -59,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     /**This holds the button below the line of input on the screen*/
     Button forecastBtn = null;
 
+    Bitmap image;
     ImageView iv = null;
 
     String description = null;
