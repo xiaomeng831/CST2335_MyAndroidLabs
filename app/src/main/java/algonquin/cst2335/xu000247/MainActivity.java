@@ -37,14 +37,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-/** This program is used to let user input password in the app and check the validation of the password.
- * @author Xiaomeng Xu
- * @version 1.0
- */
+
 public class MainActivity extends AppCompatActivity {
 
 
-    Bitmap image;
+
     /** This string represents the address of the server we will connect to */
     private String stringURL;
     /** This holds the text at the centre of the screen*/
@@ -54,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     /**This holds the button below the line of input on the screen*/
     Button forecastBtn = null;
 
+    Bitmap image;
     ImageView iv = null;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         cityText = findViewById(R.id.cityTextField);
         forecastBtn = findViewById(R.id.forecastButton);
 
-        //week9 code
+
         forecastBtn.setOnClickListener(clk ->{
             Executor newThread = Executors.newSingleThreadExecutor();
             newThread.execute(() -> {
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     double current = mainObject.getDouble("temp");
                     double min = mainObject.getDouble("temp_min");
                     double max = mainObject.getDouble("temp_max");
-                    int humitidy = mainObject.getInt("humidity");
+                    int humidity = mainObject.getInt("humidity");
 
 
 
@@ -123,17 +121,6 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-/*
-                    URL imgUrl = new URL("https://openweathermap.org/img/w/" + iconName + ".png");
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == 200) {
-                        image = BitmapFactory.decodeStream(connection.getInputStream());
-                        ImageView iv = findViewById(R.id.icon);
-                        iv.setImageBitmap(image);
-                        iv.setVisibility(View.VISIBLE);
-                    }*/
 
 
 
@@ -151,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         tv.setVisibility(View.VISIBLE);
 
                         tv = findViewById(R.id.humitidy);
-                        tv.setText("The humitidy is " + humitidy + "%");
+                        tv.setText("The humitidy is " + humidity + "%");
                         tv.setVisibility(View.VISIBLE);
 
                         iv = findViewById(R.id.icon);
@@ -174,97 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*
-       btn.setOnClickListener(clk -> {
-            String password = et.getText().toString();
-            checkPasswordComplexity( password );
-            if(checkPasswordComplexity(password) == true){
-                tv.setText("Your password meets the requirements.");
-            }else {
-                tv.setText("You shall not pass!");
-            }
-        });
-    }
-*/
-    /** This function is used to check whether the password contains an Upper Case letter,
-     * a lower case letter, a number, and a special symbol. If the password is incorrect, the
-     * screen will pop up some prompt, and show the message "You shall not pass!". Otherwise, it will
-     * show the meassage "Your password meets the requirements"
-     * @param pw The String object that we are checking if it meets the requirements.
-     * @return Returns true if it meets the requirements. Otherwise, returens false.
-     */
-/*    boolean checkPasswordComplexity( String pw ){
-        boolean foundUpperCase, foundLowerCase, foundNumber, foundSpecial;
-        foundUpperCase = foundLowerCase = foundNumber = foundSpecial = false;
 
-        for(int i=0; i < pw.length(); i++) {
-            char c = pw.charAt(i);
-            if (Character.isUpperCase(c)) {
-                foundUpperCase = true;
-            }
-            if (Character.isLowerCase(c)) {
-                foundLowerCase = true;
-            }
-            if (Character.isDigit(c)) {
-                foundNumber = true;
-            }
-            if (isSpecialCharacter(c)) {
-                foundSpecial = true;
-            }
-        }
-
-        if(!foundUpperCase) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing an upper case letter.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);// Say that they are missing an upper case letter;
-            toast.show();
-            return false;
-        }
-
-        else if( ! foundLowerCase) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a lower case letter.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);// Say that they are missing a lower case letter;
-            toast.show();
-            return false;
-        }
-        else if( ! foundNumber) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a number.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return false;
-        }
-        else if(! foundSpecial) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a special symbol.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return false;
-        }
-        else {
-            return true; //only get here if they're all true
-        }
-    }
-
-    boolean isSpecialCharacter(char c){
-        switch (c){
-            case '#':
-            case '$':
-            case '%':
-            case '^':
-            case '&':
-            case '*':
-            case '!':
-            case '@':
-            case '?':
-                return true;
-            default:
-                return false;
-        }   */
     }
 }
