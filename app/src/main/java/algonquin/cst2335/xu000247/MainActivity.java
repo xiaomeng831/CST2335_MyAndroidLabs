@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,12 +15,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -56,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView iv = null;
 
+    String description = null;
+    String iconName = null;
+    String current = null;
+    String min = null;
+    String max = null;
+    String humidity = null;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +77,59 @@ public class MainActivity extends AppCompatActivity {
         cityText = findViewById(R.id.cityTextField);
         forecastBtn = findViewById(R.id.forecastButton);
 
-        //week9 code
+
         forecastBtn.setOnClickListener(clk ->{
+            String cityName = cityText.getText().toString();
+
+            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Getting forecast")
+                    .setMessage("We're calling people in " + cityName + " to look outside their windows and tell us what's the weather like over there.")
+                    .setView(new ProgressBar(MainActivity.this))
+                    .show();
+
             Executor newThread = Executors.newSingleThreadExecutor();
             newThread.execute(() -> {
                 //This runs on another thread
-                String cityName = cityText.getText().toString();
+
                 try{
                     stringURL = "https://api.openweathermap.org/data/2.5/weather?q="
                             + URLEncoder.encode(cityName, "UTF-8")
-                            + "&appid=7e943c97096a9784391a981c4d878b22&units=metric";
+                            + "&appid=7e943c97096a9784391a981c4d878b22&units=metric&mode=xml";
 
                     URL url = new URL(stringURL);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
+                    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                    factory.setNamespaceAware(false);
+                    XmlPullParser xpp = factory.newPullParser();
+                    xpp.setInput(in, "UTF-8");
+
+
+
+                    while (xpp.next() != XmlPullParser.END_DOCUMENT){
+                        switch (xpp.getEventType()){
+                            case XmlPullParser.START_TAG:
+                                if(xpp.getName().equals("temperature")){
+                                    current = xpp.getAttributeValue(null, "value");
+                                    min = xpp.getAttributeValue(null, "min");
+                                    max = xpp.getAttributeValue(null, "max");
+                                }else if(xpp.getName().equals("weather")){
+                                    description= xpp.getAttributeValue(null, "value");
+                                    iconName = xpp.getAttributeValue(null, "icon");
+                                }else if(xpp.getName().equals("humidity")){
+                                    humidity = xpp.getAttributeValue(null, "humidity");
+                                }
+                                break;
+                            case XmlPullParser.END_TAG:
+
+                                break;
+                            case XmlPullParser.TEXT:
+
+                                break;
+                        }
+                    }
+/*
                     String text = (new BufferedReader(
                             new InputStreamReader(in, StandardCharsets.UTF_8)))
                             .lines()
@@ -97,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     double min = mainObject.getDouble("temp_min");
                     double max = mainObject.getDouble("temp_max");
                     int humitidy = mainObject.getInt("humidity");
-
+*/
 
 
                     File file = new File(getFilesDir(), iconName + ".png");
@@ -123,17 +173,6 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-/*
-                    URL imgUrl = new URL("https://openweathermap.org/img/w/" + iconName + ".png");
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.connect();
-                    int responseCode = connection.getResponseCode();
-                    if (responseCode == 200) {
-                        image = BitmapFactory.decodeStream(connection.getInputStream());
-                        ImageView iv = findViewById(R.id.icon);
-                        iv.setImageBitmap(image);
-                        iv.setVisibility(View.VISIBLE);
-                    }*/
 
 
 
@@ -151,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                         tv.setVisibility(View.VISIBLE);
 
                         tv = findViewById(R.id.humitidy);
-                        tv.setText("The humitidy is " + humitidy + "%");
+                        tv.setText("The humitidy is " + humidity + "%");
                         tv.setVisibility(View.VISIBLE);
 
                         iv = findViewById(R.id.icon);
@@ -161,12 +200,10 @@ public class MainActivity extends AppCompatActivity {
                         tv = findViewById(R.id.description);
                         tv.setText(description);
                         tv.setVisibility(View.VISIBLE);
+
+                        dialog.hide();
                     });
-
-
-
-
-                }catch (IOException | JSONException ioe){
+                }catch (IOException | XmlPullParserException ioe){
                     Log.e("Connection error:", ioe.getMessage());
                 }
             });
@@ -174,97 +211,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*
-       btn.setOnClickListener(clk -> {
-            String password = et.getText().toString();
-            checkPasswordComplexity( password );
-            if(checkPasswordComplexity(password) == true){
-                tv.setText("Your password meets the requirements.");
-            }else {
-                tv.setText("You shall not pass!");
-            }
-        });
-    }
-*/
-    /** This function is used to check whether the password contains an Upper Case letter,
-     * a lower case letter, a number, and a special symbol. If the password is incorrect, the
-     * screen will pop up some prompt, and show the message "You shall not pass!". Otherwise, it will
-     * show the meassage "Your password meets the requirements"
-     * @param pw The String object that we are checking if it meets the requirements.
-     * @return Returns true if it meets the requirements. Otherwise, returens false.
-     */
-/*    boolean checkPasswordComplexity( String pw ){
-        boolean foundUpperCase, foundLowerCase, foundNumber, foundSpecial;
-        foundUpperCase = foundLowerCase = foundNumber = foundSpecial = false;
 
-        for(int i=0; i < pw.length(); i++) {
-            char c = pw.charAt(i);
-            if (Character.isUpperCase(c)) {
-                foundUpperCase = true;
-            }
-            if (Character.isLowerCase(c)) {
-                foundLowerCase = true;
-            }
-            if (Character.isDigit(c)) {
-                foundNumber = true;
-            }
-            if (isSpecialCharacter(c)) {
-                foundSpecial = true;
-            }
-        }
-
-        if(!foundUpperCase) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing an upper case letter.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);// Say that they are missing an upper case letter;
-            toast.show();
-            return false;
-        }
-
-        else if( ! foundLowerCase) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a lower case letter.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);// Say that they are missing a lower case letter;
-            toast.show();
-            return false;
-        }
-        else if( ! foundNumber) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a number.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return false;
-        }
-        else if(! foundSpecial) {
-            Context context = getApplicationContext();
-            CharSequence text = "Missing a special symbol.";
-            int duration = Toast.LENGTH_LONG;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return false;
-        }
-        else {
-            return true; //only get here if they're all true
-        }
-    }
-
-    boolean isSpecialCharacter(char c){
-        switch (c){
-            case '#':
-            case '$':
-            case '%':
-            case '^':
-            case '&':
-            case '*':
-            case '!':
-            case '@':
-            case '?':
-                return true;
-            default:
-                return false;
-        }   */
     }
 }
